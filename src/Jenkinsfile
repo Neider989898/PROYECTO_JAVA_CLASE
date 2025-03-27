@@ -1,36 +1,55 @@
 pipeline {
     agent any
-    //tools {
+  //tools {
       //  maven 'Maven'
-        ///jdk 'JDK instalado'
+        // jdk 'JDK instalado'
     //}
     stages {
         stage('Clonar código') {
             steps {
-                git url: 'https://github.com/Neider989898/PROYECTO_JAVA_CLASE.git', branch: 'main'
+                git url: 'https://github.com/Neider989898/java-jenkins-ci-example.git', branch: 'main'
             }
         }
         stage('Compilar') {
             steps {
-                bat 'mvn clean compile'
+                script {
+                    if (isUnix()) {
+                        sh 'mvn clean compile'
+                    } else {
+                        bat 'mvn clean compile'
+                    }
+                }
             }
-        }stage('Pruebas') {
+        }
+        stage('Pruebas') {
             steps {
-                bat 'mvn test'
+                script {
+                    if (isUnix()) {
+                        sh 'mvn test'
+                    } else {
+                        bat 'mvn test'
+                    }
+                }
             }
         }
         stage('Empaquetar') {
             steps {
-                bat 'mvn package'
+                script {
+                    if (isUnix()) {
+                        sh 'mvn package'
+                    } else {
+                        bat 'mvn package'
+                    }
+                }
             }
         }
     }
     post {
         success {
-            echo 'La compilacion y las pruebas fueron exitosas.'
+            echo ' La compilación y las pruebas fueron exitosas.'
         }
         failure {
-            echo 'Hubo errores en la compilacion o en las pruebas.'
+            echo 'Hubo errores en la compilación o en las pruebas.'
         }
     }
 }
